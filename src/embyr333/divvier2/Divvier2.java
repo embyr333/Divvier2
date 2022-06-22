@@ -1,15 +1,15 @@
 /*
 Objective and proposed approach: See comment atop first commit (220619_1442)
 
-Done here:
-Return is now the smallest defecit (ideally 0) from "half sum of bricks"
-, i.e how close we can get to using exactly half of the "total brick length" 
-(how close to being able to make two equal-lenght lines of bricks).
-Also switched input collection type from Integer to Double, as otherwise, if total
-is an odd number, half will be 1 less than actual half due to integer division
-dropping the remainder, and want to allow fractional input values eventually anyway
+Did here:
+Changed the method to void return type and reported the 'difference from half'
+as a print in the console, while removing the 'print wraps' on the test input
+calls in the main method
 
-Fourth commit, at date_time  220621_2313
+Next: report the contents of the 'used' and 'unused' subcollections, and their 
+respective 'total brick lengths'
+
+Fifth commit, at date_time  220622_43
  */
 
 package embyr333.divvier2;
@@ -26,22 +26,19 @@ class Divvier2
 {
     public static void main(String[] args)
     {
-        // --removed the second (int) arg, as 'goal' will now be calculated
-        //  as half the sum of the element values; also changed type to Double
-        System.out.println(makeBricks(Arrays.asList(1.0, 1.0, 1.0, 5.0))); // 1.0
-        System.out.println(makeBricks(Arrays.asList(1.0, 1.0, 1.0, 5.0, 5.0))); // 0.5
-        System.out.println(makeBricks(Arrays.asList(1.0, 1.0, 1.0, 1.0, 0.0))); // 0.0
-        System.out.println(makeBricks(Arrays.asList(1.0, 1.0, 1.0, 1.0, 1.0, 0.0))); // 0.5
-        System.out.println(makeBricks(Arrays.asList(1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0))); // 0.5
-        System.out.println(makeBricks(Arrays.asList(1.0, 1.0, 1.0, 5.0, 2.0, 2.0, 2.0))); // 0.0
-        System.out.println(makeBricks(Arrays.asList(7.0, 5.0, 2.0, 2.0, 2.0))); // 0.0
+        // --Comments after these calls show the expected 'difference from half'
+        // (which is now reported in a print statement in makeBricks() instead
+        makeBricks(Arrays.asList(1.0, 1.0, 1.0, 5.0)); // 1.0
+        makeBricks(Arrays.asList(1.0, 1.0, 1.0, 5.0, 5.0)); // 0.5
+        makeBricks(Arrays.asList(1.0, 1.0, 1.0, 1.0, 0.0)); // 0.0
+        makeBricks(Arrays.asList(1.0, 1.0, 1.0, 1.0, 1.0, 0.0)); // 0.5
+        makeBricks(Arrays.asList(1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0)); // 0.5
+        makeBricks(Arrays.asList(1.0, 1.0, 1.0, 5.0, 2.0, 2.0, 2.0)); // 0.0
+        makeBricks(Arrays.asList(7.0, 5.0, 2.0, 2.0, 2.0)); // 0.0
 
     }    
-    
-    // --removed the second (int) parameter, and change list type to Double, as mentioned above,
-    // and made matching changes as needed in body (int/Integer->double/Double);
-    // also changed some variable names for (wh I hope is increased) clarity
-    static double makeBricks(List<Double> bricks) 
+
+    static void makeBricks(List<Double> bricks) 
     { 
         Set<Double> brickSizes = new HashSet();
         brickSizes.addAll(bricks);
@@ -85,6 +82,7 @@ class Divvier2
         }          
         System.out.println("brickLine " + brickLine); // (intermediate check)
 
-        return halfBricksLength - brickLine;
+        System.out.println("Smallest fifference from half is: " + (halfBricksLength - brickLine)); // --added
+
     }
 }
