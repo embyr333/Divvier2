@@ -1,19 +1,19 @@
 /*
 Objective and proposed approach: See comment atop first commit (220619_1442)
 
-Did here:
-Changed the method to void return type and reported the 'difference from half'
-as a print in the console, while removing the 'print wraps' on the test input
-calls in the main method
+Did here: Reported the contents of the 'used' and 'unused' subcollections, their 
+respective 'total brick lengths', and the difference between
 
-Next: report the contents of the 'used' and 'unused' subcollections, and their 
-respective 'total brick lengths'
+Next: Convert descriptions and vaariable names etc. to that of the Divvier program,
+then modify to replace the Divvier_to_11_IG and Divvier_unlimited_IG classes
+used by the Divvier GUI
 
-Fifth commit, at date_time  220622_43
+Sixth commit, at date_time  220626_0134
  */
 
 package embyr333.divvier2;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -27,7 +27,6 @@ class Divvier2
     public static void main(String[] args)
     {
         // --Comments after these calls show the expected 'difference from half'
-        // (which is now reported in a print statement in makeBricks() instead
         makeBricks(Arrays.asList(1.0, 1.0, 1.0, 5.0)); // 1.0
         makeBricks(Arrays.asList(1.0, 1.0, 1.0, 5.0, 5.0)); // 0.5
         makeBricks(Arrays.asList(1.0, 1.0, 1.0, 1.0, 0.0)); // 0.0
@@ -70,19 +69,53 @@ class Divvier2
         // apply stream approaches, but will keep this approach for the moment...)
         double brickLine = 0;
         // Now fill brickLine as near as possible to half without exceeding it
+        
+        
+        List<Double> bricksUsed = new ArrayList<>(); // --added
+
+        
         for (Double brick : bigToSmallBrickCounts.keySet())
         {            
             for (int i = 0; i < bigToSmallBrickCounts.get(brick); ++i)
             {
                 if (brickLine <= halfBricksLength - brick)
+                {    
                     brickLine += brick;
+                    
+                    
+                    bricksUsed.add(brick); // --added
+                    
+                    
+                }    
                 else // (Not essential, but more efficient to include)
                     break;
             }    
         }          
         System.out.println("brickLine " + brickLine); // (intermediate check)
 
-        System.out.println("Smallest fifference from half is: " + (halfBricksLength - brickLine)); // --added
+        
+        // --added...
+        List<Double> bricksNotUsed = new ArrayList<>(bricks); // first make a copy
+        // of bricks passed as arg...as it was using Arrays.asList() it cannot be modified
+        // and its is best to allow that flexibility for testing for the moment at least
+        System.out.println("copy of bricks: " + bricksNotUsed); // (intermediate check)
+        for (int i = 0; i < bricksUsed.size(); ++i)
+        {
+            bricksNotUsed.remove(bricksUsed.get(i));
+        } // NOW bricksNotUsed is properly nnamed
+        // (Alternative would be to build the reciprocal list to bricksUsed in the
+        // nested loop above if the else...break statement is removed)
+        
+        
+        System.out.println("Smallest difference from half is: " + (halfBricksLength - brickLine)); // --added
 
+        // --added
+        System.out.println("Bricks used: " + bricksUsed); // collection (List) of bricks used
+        System.out.println("...total length: " + brickLine);
+        System.out.println("Bricks not used: " + bricksNotUsed); // collection (List) of bricks unused
+        System.out.println("...total length: " + (totalBricksLength - brickLine)); 
+        System.out.println("Difference between bricksUsed and bricksNotUsed: " + (totalBricksLength - (2 * brickLine)));
+        System.out.println("");
+        
     }
 }
