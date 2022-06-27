@@ -1,16 +1,20 @@
 /*
 Objective and proposed approach: See comment atop first commit (220619_1442)
 
-Did here: Changed many of the variable names from the idea of a list of bricks
- of specified lengths to elements in a list of numbers
+Did here: 
+Unfortunately, I have realised that the switch to use of the words 'item(s)' asmain   
+component of many variable names, while good for generality, does not promote clarity,
+as there are at least two numerical aspects to the data being processed: the values 
+of the numbers in the input list, and the item of occurrances of each value.
+Therefore I decided to switch again, relacing the word 'item' that describes the 
+list elements etc. with the word 'item'.
 
 Next: 
-- Possibly further name changes to improve clarity
 - Convert the content of the console prints to match those for GUI display in
 the original Divvier program
 - Then the class to replace the Divvier_to_11_IG and Divvier_unlimited_IG classes used there
 
-Seventh commit, at date_time  220626_1708
+Seventh commit, at date_time  220627_1319
  */
 
 package embyr333.divvier2;
@@ -29,86 +33,92 @@ class Divvier2
     public static void main(String[] args)
     {
         // --Comments after these calls now show the expected difference 
-        // between the 'part1' and part2' splits
-        makeBricks(Arrays.asList(1.0, 1.0, 1.0, 5.0)); // 2.0
-        makeBricks(Arrays.asList(1.0, 1.0, 1.0, 5.0, 5.0)); // 1.0
-        makeBricks(Arrays.asList(1.0, 1.0, 1.0, 1.0, 0.0)); // 0.0
-        makeBricks(Arrays.asList(1.0, 1.0, 1.0, 1.0, 1.0, 0.0)); // 1.0
-        makeBricks(Arrays.asList(1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0)); // 1.0
-        makeBricks(Arrays.asList(1.0, 1.0, 1.0, 5.0, 2.0, 2.0, 2.0)); // 0.0
-        makeBricks(Arrays.asList(7.0, 5.0, 2.0, 2.0, 2.0)); // 0.0
+        // between the two splits
+        process(Arrays.asList(1.0, 1.0, 1.0, 5.0)); // 2.0
+        process(Arrays.asList(1.0, 1.0, 1.0, 5.0, 5.0)); // 1.0
+        process(Arrays.asList(1.0, 1.0, 1.0, 1.0, 0.0)); // 0.0
+        process(Arrays.asList(1.0, 1.0, 1.0, 1.0, 1.0, 0.0)); // 1.0
+        process(Arrays.asList(1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0)); // 1.0
+        process(Arrays.asList(1.0, 1.0, 1.0, 5.0, 2.0, 2.0, 2.0)); // 0.0
+        process(Arrays.asList(7.0, 5.0, 2.0, 2.0, 2.0)); // 0.0
 
     }    
 
-    static void makeBricks(List<Double> numbersList) // --changed parameter name 'bricks' to 'numbersList'
-    { 
-        Set<Double> numberSet = new HashSet(); // --changed variable name 'brickSizes' to 'numberSet'
-        numberSet.addAll(numbersList);
+    static void process(List<Double> itemList) // --changed method name name 'makeBricks' to 'process'
+    { // ...and also the word 'numbers' to 'item' in parameter name
 
-        // --changed variable name 'bigToSmallBrickCounts' to 'bigToSmallNumberCounts'
-        Map<Double, Integer> bigToSmallNumberCounts = new TreeMap<>(Comparator.reverseOrder());
+        Set<Double> itemSet = new HashSet(); // --changed variable name 'numberSet' to 'itemSet'
+        itemSet.addAll(itemList);
 
-        for(Double number : numberSet) // --changed variable name 'number' to 'number'
-            bigToSmallNumberCounts.put(number, 0); // Initialize with each number count at zero     
-
-        double totalNumbersLength = 0; // --changed variable name 'totalBricksLength' to 'totalNumbersLength'
-        // Sum the numbersList, i.e. total 'length' of input collection
-        // to the map-filling loop itarating over the list...
-        for(Double number : numbersList) // --changed variable name ''number to 'number'
+        Map<Double, Integer> bigToSmallItemCounts = new TreeMap<>(Comparator.reverseOrder());
+        // --changed variable name 'bigToSmallNumberCounts' to 'bigToSmallItemCounts'
+        
+        for(Double item : itemSet) // --changed variable name 'item' to 'item'
+            bigToSmallItemCounts.put(item, 0); // Initialize with each item count at zero     
+        
+        // --changed variable name from 'totalNumbersLength' to just 'total'
+        double total = 0; // To hold sum of itemList (input list item values)
+        
+        // Fill the map by iterating over the list, and also sum the itemList
+        for(Double item : itemList) // --changed variable name 'number' to 'item'
         { 
-            // Count by assigning number sizes to occurances 
-            bigToSmallNumberCounts.replace(number, bigToSmallNumberCounts.get(number) + 1);    
+            // Count by assigning item sizes to occurances 
+            bigToSmallItemCounts.replace(item, bigToSmallItemCounts.get(item) + 1);    
             
-            // Also calculate the total input number lenght if arranged in a line
-            totalNumbersLength += number;
+            // Also calculate the total input item lenght if arranged in a line
+            total += item;
         }    
-        System.out.println(bigToSmallNumberCounts); // (intermediate check)
-        System.out.println("totalNumbersLength " + totalNumbersLength); // (intermediate check)
+        System.out.println(bigToSmallItemCounts); // (intermediate check)
+        System.out.println("total " + total); // (intermediate check)
 
-        // Calculate half of number collection 'length' 
-        double halfNumbersLength = totalNumbersLength / 2; // --changed variable name 'halfBricksLength' to 'halfNumbersLength'
-        System.out.println("halfNumbersLength " + halfNumbersLength); // (intermediate check)
+        // Calculate half the sum of the itemList
+        double half = total / 2; // --changed variable name from 'halfNumbersLength' to just 'half'
+        System.out.println("half " + half); // (intermediate check)
 
         // (Have a feeling there might be better Map methods to use? and/or could 
         // apply stream approaches, but will keep this approach for the moment...)
         
-        double numbersLine = 0; // --changed variable name 'brickline' to 'numbersLine'
-        // Now fill numbersLine as near as possible to half without exceeding it
+        // --changed variable name from '' to 'div1', 
+        double div1 = 0; // --changed variable name from 'numbersLine' to 'div1'
+        // to represent sum of items assigned to first of two new lists representing 
+        // as-equitable-as-possible division of the original list
 
-        List<Double> numbersUsed = new ArrayList<>(); // --changed variable name 'bricksUsed' to 'numbersUsed'
+        List<Double> itemsUsed = new ArrayList<>(); // --changed variable name from 'numbersUsed' to 'itemsUsed'
         
-        for (Double number : bigToSmallNumberCounts.keySet()) // --changed variable name 'brick' to 'number'
+        // Now fill div1 as near as possible to half without exceeding 
+        for (Double item : bigToSmallItemCounts.keySet()) // --changed variable name 'number' to 'item'
         {            
-            for (int i = 0; i < bigToSmallNumberCounts.get(number); ++i)
+            for (int i = 0; i < bigToSmallItemCounts.get(item); ++i)
             {
-                if (numbersLine <= halfNumbersLength - number)
+                if (div1 <= half - item)
                 {    
-                    numbersLine += number;
-                    numbersUsed.add(number);                     
+                    div1 += item;
+                    itemsUsed.add(item);                     
                 }    
                 else // (Not essential, but more efficient to include)
                     break;
             }    
         }          
-        System.out.println("numbersLine " + numbersLine); // (intermediate check)        
-        
-        // --changed variable name 'bricksNotUsed' to 'numbersNotUsed'...
-        List<Double> numbersNotUsed = new ArrayList<>(numbersList); // First make a copy
-        // of numbersList passed as arg...as it was using Arrays.asList() it cannot be modified
+        System.out.println("div1 " + div1); // (intermediate check)        
+
+        // --changed variable name from 'numbersNotUsed' to 'itemsNotUsed'...
+        List<Double> itemsNotUsed = new ArrayList<>(itemList); // First make a copy
+        // of itemList passed as arg...as it was using Arrays.asList() it cannot be modified
         // and its is best to allow that flexibility for testing for the moment at least
-        for (int i = 0; i < numbersUsed.size(); ++i)
+
+        for (int i = 0; i < itemsUsed.size(); ++i)
         {
-            numbersNotUsed.remove(numbersUsed.get(i));
-        } // NOW numbersNotUsed is properly nnamed
-        // (Alternative would be to build the reciprocal list to numbersUsed in 
+            itemsNotUsed.remove(itemsUsed.get(i));
+        } // NOW itemsNotUsed is properly nnamed
+        // (Alternative would be to build the reciprocal list to itemsUsed in 
         // the nested loop above if the else...break statement is removed)
   
-        System.out.println("Smallest difference from half is: " + (halfNumbersLength - numbersLine));
-        System.out.println("Numbers used: " + numbersUsed); // List of numbersList used
-        System.out.println("...total length: " + numbersLine);
-        System.out.println("Numbers not used: " + numbersNotUsed); // List) of numbers unused
-        System.out.println("...total length: " + (totalNumbersLength - numbersLine)); 
-        System.out.println("Difference between numbersUsed and numbersNotUsed: " + (totalNumbersLength - (2 * numbersLine)));
+        System.out.println("Smallest difference from half is: " + (half - div1));
+        System.out.println("Items used: " + itemsUsed); 
+        System.out.println("...total length: " + div1);
+        System.out.println("Items not used: " + itemsNotUsed); 
+        System.out.println("...total length: " + (total - div1)); 
+        System.out.println("Difference between itemsUsed and itemssNotUsed: " + (total - (2 * div1)));
         System.out.println("");
         
     }
