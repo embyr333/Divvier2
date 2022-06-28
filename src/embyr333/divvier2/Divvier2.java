@@ -2,18 +2,15 @@
 Objective and proposed approach: See comment atop first commit (220619_1442)
 
 Done here: 
-- Modified process() to find correct (nearest-to-equal) division for the first
-'failed' test, of my ridiculously small test set to date. Do not know yet if it 
-is general enough to deal with all possible inputs...don't (yet) have a way to
-think of proving/disproving, but further testing should give some initial idea of 
-whether it is worth pursuing further
+- Reverted condition limit in outer loop of nested loop to previous expression
 
 Next: 
+- Try out the 'map setup simplification' idea
 - Further testing...
 - If get to a point where the program seems like it might handle any input, 
  then use the class to replace the Divvier_to_11_IG and Divvier_unlimited_IG classes used there
 
-11th commit, at date_time  220628_1353
+12th commit, at date_time  220628_1341
  */
 
 package embyr333.divvier2;
@@ -91,12 +88,18 @@ class Divvier2
 
         List<Double> itemsUsed = new ArrayList<>(); 
         
-
         
-//        for (int a = 0; a < itemSet.size(); ++a) 
-        for (int a = 0; a < bigToSmallItemCounts.keySet().size(); ++a)// --alt-----------------------------------------
+
+        // --rethinking how many times I want the outer loop to go:
+        // although the changing  bigToSmallItemCounts.keySet().size()  limit
+        // does 'work' with test inputs so far, probably best for the moment to 
+        // set the value before the loop as...
+//        int outerLimit = bigToSmallItemCounts.keySet().size();
+        // and use that as a < outerLimit
+        // or, if I do retain itemSet (decide against map setup simplification idea above)
+        // just leave as...        
+        for (int a = 0; a < itemSet.size(); ++a) 
         {    
-            
             // to store 'current-best' split data
             double tempDiv1 = 0.0;
             List<Double> tempItemsUsed = new ArrayList<>();            
