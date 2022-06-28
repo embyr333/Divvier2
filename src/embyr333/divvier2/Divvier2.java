@@ -2,15 +2,14 @@
 Objective and proposed approach: See comment atop first commit (220619_1442)
 
 Done here: 
-- Reverted condition limit in outer loop of nested loop to previous expression
+- Simplified the 'map setup' code
 
 Next: 
-- Try out the 'map setup simplification' idea
 - Further testing...
 - If get to a point where the program seems like it might handle any input, 
  then use the class to replace the Divvier_to_11_IG and Divvier_unlimited_IG classes used there
 
-12th commit, at date_time  220628_1341
+13th commit, at date_time  220628_1854
  */
 
 package embyr333.divvier2;
@@ -39,7 +38,6 @@ class Divvier2
         process(Arrays.asList(1.0, 1.0, 1.0, 5.0, 2.0, 2.0, 2.0)); // 0.0
         process(Arrays.asList(7.0, 5.0, 2.0, 2.0, 2.0)); // 0.0
 
-        // --first test generating a fail now passes...
         process(Arrays.asList(9.0, 6.0, 7.0, 11.0)); // 1.0
 
     }    
@@ -48,59 +46,58 @@ class Divvier2
     { 
         double total = 0; // To hold sum of itemList (input list item numerical values)
 
-        // Define the set of unique item numerical values in the input list
-        Set<Double> itemSet = new HashSet(); 
-        itemSet.addAll(itemList);
-
         
-        // --next time, to improve conciseness, and maybe efficiency,
-        //see if can combine the map 'initialisation' and filling
-        // ie. maybe can omit the itemSet, use putIfAbsent() with put() instead of
-        // replace() below and bigToSmallItemCounts.keySet().size() in place of
-        // itemSet.size() later, as flagged --------------------------------------------------------------------------------------
+        // --made the map setup more concise, (and maybe a little more efficient?),
+        // by combining the map 'initialisation' and filling
+        // so no longer need...
+//        Set<Double> itemSet = new HashSet(); 
+//        itemSet.addAll(itemList);        
         
         Map<Double, Integer> bigToSmallItemCounts = new TreeMap<>(Comparator.reverseOrder());
         
-        for(Double item : itemSet) 
-            bigToSmallItemCounts.put(item, 0); // Initialize with each item (key) count value at zero      
+        // ...and no longer need...
+//        for(Double item : itemSet) 
+//            bigToSmallItemCounts.put(item, 0); // Initialize with each item (key) count value at zero      
                 
         // Fill the map by iterating over the list, and also sum the itemList
         for(Double item : itemList) 
         { 
             // Count by assigning item sizes to occurances 
-            bigToSmallItemCounts.replace(item, bigToSmallItemCounts.get(item) + 1);    
+            
+//            bigToSmallItemCounts.replace(item, bigToSmallItemCounts.get(item) + 1); 
+            // ...replacement statement...
+            bigToSmallItemCounts.put(item, 
+                    bigToSmallItemCounts.containsKey(item) ?
+                    bigToSmallItemCounts.get(item) + 1 :
+                    1);
+            // (--thought use of putIfAbsent() might be applicable, but realised
+            // not in a straughtforward way that came to mind, but the above does the job)
+           
             
             // Also calculate the total of input items
             total += item;
         }    
-//        System.out.println("bigToSmallItemCounts " + bigToSmallItemCounts); // (intermediate check)
-//        System.out.println("total " + total); // (intermediate check)
         
         double half = total / 2; // Calculate half the sum of the itemList
-//        System.out.println("half " + half); // (intermediate check)
-
-        // (Have a feeling there might be better Map methods to use below? and/or could 
-        // apply stream approaches, but will keep this approach for the moment...)
-       
         
         double div1 = 0; // Sum of items assigned to first of two new lists  
         // representing as-equitable-as-possible division of the original list
 
-        List<Double> itemsUsed = new ArrayList<>(); 
+        // (Have a feeling there might be better Map methods to use below? and/or could 
+        // apply stream approaches, but will keep this approach for the moment...)
         
-        
+        List<Double> itemsUsed = new ArrayList<>();         
 
-        // --rethinking how many times I want the outer loop to go:
-        // although the changing  bigToSmallItemCounts.keySet().size()  limit
-        // does 'work' with test inputs so far, probably best for the moment to 
-        // set the value before the loop as...
-//        int outerLimit = bigToSmallItemCounts.keySet().size();
-        // and use that as a < outerLimit
-        // or, if I do retain itemSet (decide against map setup simplification idea above)
-        // just leave as...        
-        for (int a = 0; a < itemSet.size(); ++a) 
+        // (Maybe rethink later how many times it is necessary for the outer loop to iterate below)
+        
+        // --since I got rid of itemSet in the map setup simplification above,
+        // now replacing   itemSet.size()   limit expression below with outerLimit 
+        // defined before the loop...
+         int outerLimit = bigToSmallItemCounts.keySet().size(); 
+//        for (int a = 0; a < itemSet.size(); ++a) 
+        for (int a = 0; a < outerLimit; ++a) 
         {    
-            // to store 'current-best' split data
+            // To store 'current-best' split data
             double tempDiv1 = 0.0;
             List<Double> tempItemsUsed = new ArrayList<>();            
             
@@ -121,15 +118,16 @@ class Divvier2
                 }    
             }        
 
-            // store 'best' split so far
+            // Store 'best' split so far
             if (tempDiv1 > div1)
             {
                 div1 = tempDiv1;
                 itemsUsed = new ArrayList<>(tempItemsUsed);  
             }    
-            
-            System.out.println("bigToSmallItemCounts " + bigToSmallItemCounts); // (temp internediate check)
-            
+                        
+            // Remove the first (largest) item from the map before next iteration of outer loop
+            // so that process can begin at subsequent item, which might otherwise be missed
+            // as a source of possible best-division initial item
             bigToSmallItemCounts.remove(
                     bigToSmallItemCounts.keySet().stream().findFirst().get());
             
