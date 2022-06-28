@@ -1,16 +1,19 @@
 /*
 Objective and proposed approach: See comment atop first commit (220619_1442)
 
-Did here: 
-- Converted the content of the console prints to match those for GUI display in
-the original Divvier program
-- Started some extra testing, immediaely uncovering a major logic flaw!!!
+Done here: 
+- Modified process() to find correct (nearest-to-equal) division for the first
+'failed' test, of my ridiculously small test set to date. Do not know yet if it 
+is general enough to deal with all possible inputs...don't (yet) have a way to
+think of proving/disproving, but further testing should give some initial idea of 
+whether it is worth pursuing further
 
 Next: 
-- See if can fix code to deal with diverse input lists
-- If so, then use the class to replace the Divvier_to_11_IG and Divvier_unlimited_IG classes used there
+- Further testing...
+- If get to a point where the program seems like it might handle any input, 
+ then use the class to replace the Divvier_to_11_IG and Divvier_unlimited_IG classes used there
 
-Tenth commit, at date_time  220627_1902
+11th commit, at date_time  220628_1353
  */
 
 package embyr333.divvier2;
@@ -28,7 +31,7 @@ class Divvier2
 {
     public static void main(String[] args)
     {
-        // Comments after these calls show the expected difference 
+        // Comments after these test calls show the expected difference 
         // between the two splits
         
         process(Arrays.asList(1.0, 1.0, 1.0, 5.0)); // 2.0
@@ -39,28 +42,31 @@ class Divvier2
         process(Arrays.asList(1.0, 1.0, 1.0, 5.0, 2.0, 2.0, 2.0)); // 0.0
         process(Arrays.asList(7.0, 5.0, 2.0, 2.0, 2.0)); // 0.0
 
-        // --adding some more 'challenging' inputs, for which I show diffs
-        // supplied by original Divvier, which gives definitive answers for 
-        // lists of 4 and 5, 'fairly confident' answers for 6-11,
-        // and 'possibly not minimal diff' answers for lists of >11...
+        // --first test generating a fail now passes...
         process(Arrays.asList(9.0, 6.0, 7.0, 11.0)); // 1.0
-        // ...oops, it seems I immediately expose a major logic flaw
-        // as this code returns 11.00 ...realise why...see if can fix!...
 
     }    
 
     static void process(List<Double> itemList) 
     { 
+        double total = 0; // To hold sum of itemList (input list item numerical values)
+
+        // Define the set of unique item numerical values in the input list
         Set<Double> itemSet = new HashSet(); 
         itemSet.addAll(itemList);
 
+        
+        // --next time, to improve conciseness, and maybe efficiency,
+        //see if can combine the map 'initialisation' and filling
+        // ie. maybe can omit the itemSet, use putIfAbsent() with put() instead of
+        // replace() below and bigToSmallItemCounts.keySet().size() in place of
+        // itemSet.size() later, as flagged --------------------------------------------------------------------------------------
+        
         Map<Double, Integer> bigToSmallItemCounts = new TreeMap<>(Comparator.reverseOrder());
         
         for(Double item : itemSet) 
-            bigToSmallItemCounts.put(item, 0); // Initialize with each item count at zero     
-        
-        double total = 0; // To hold sum of itemList (input list item values)
-        
+            bigToSmallItemCounts.put(item, 0); // Initialize with each item (key) count value at zero      
+                
         // Fill the map by iterating over the list, and also sum the itemList
         for(Double item : itemList) 
         { 
@@ -78,27 +84,56 @@ class Divvier2
 
         // (Have a feeling there might be better Map methods to use below? and/or could 
         // apply stream approaches, but will keep this approach for the moment...)
+       
         
         double div1 = 0; // Sum of items assigned to first of two new lists  
         // representing as-equitable-as-possible division of the original list
 
         List<Double> itemsUsed = new ArrayList<>(); 
         
-        // Now fill div1 as near as possible to half without exceeding 
-        for (Double item : bigToSmallItemCounts.keySet()) 
-        {            
-            for (int i = 0; i < bigToSmallItemCounts.get(item); ++i)
-            {
-                if (div1 <= half - item)
-                {    
-                    div1 += item;
-                    itemsUsed.add(item);                     
+
+        
+//        for (int a = 0; a < itemSet.size(); ++a) 
+        for (int a = 0; a < bigToSmallItemCounts.keySet().size(); ++a)// --alt-----------------------------------------
+        {    
+            
+            // to store 'current-best' split data
+            double tempDiv1 = 0.0;
+            List<Double> tempItemsUsed = new ArrayList<>();            
+            
+            System.out.println("bigToSmallItemCounts " + bigToSmallItemCounts); // (temp internediate check)
+
+            // Now fill tempDiv1 as near as possible to half without exceeding 
+            for (Double item : bigToSmallItemCounts.keySet()) 
+            {            
+                for (int i = 0; i < bigToSmallItemCounts.get(item); ++i)
+                {
+                    if (tempDiv1 <= half - item)
+                    {    
+                        tempDiv1 += item;
+                        tempItemsUsed.add(item);                     
+                    }    
+                    else // (Not essential, but more efficient to include)
+                        break;
                 }    
-                else // (Not essential, but more efficient to include)
-                    break;
+            }        
+
+            // store 'best' split so far
+            if (tempDiv1 > div1)
+            {
+                div1 = tempDiv1;
+                itemsUsed = new ArrayList<>(tempItemsUsed);  
             }    
-        }          
-//        System.out.println("div1 " + div1); // (intermediate check)        
+            
+            System.out.println("bigToSmallItemCounts " + bigToSmallItemCounts); // (temp internediate check)
+            
+            bigToSmallItemCounts.remove(
+                    bigToSmallItemCounts.keySet().stream().findFirst().get());
+            
+            System.out.println("bigToSmallItemCounts " + bigToSmallItemCounts); // (temp internediate check)
+        }
+
+        
 
         List<Double> itemsNotUsed = new ArrayList<>(itemList); // First make a copy
         // of itemList passed as arg...as it was using Arrays.asList() it cannot be modified
@@ -110,21 +145,9 @@ class Divvier2
         } // NOW itemsNotUsed is properly nnamed
         // (Alternative would be to build the reciprocal list to itemsUsed in 
         // the nested loop above if the else...break statement is removed)
-  
-        
-        
-        // --replacing these output statements...
-//        System.out.println("Smallest difference from half is: " + (half - div1));
-//        System.out.println("Items used for div1: " + itemsUsed); 
-//        System.out.println("...total div1: " + div1);
-//        System.out.println("Items not used: " + itemsNotUsed); 
-//        System.out.println("...total div2: " + (total - div1)); 
-//        System.out.println("Difference between itemsUsed (div1) and itemssNotUsed (div2): " + (total - (2 * div1)));
-//        System.out.println("");
-        
-        // ...with equivalent statements in prep for integration into GUI from 
-        // previous program (where Strings will be displayed in a TextArea),
-        // adding (back) extra line-breaks as needed
+
+        // (Can add (back) extra line-breaks displaying the strings below in 
+        // TextArea on integration into the preexisting GUI setup)
         System.out.print(String.format("Smallest difference is: %.1f\n", (total - (2 * div1)))); 
         System.out.print(String.format("between sub-collection        %s\n", itemsUsed)); 
         System.out.print(String.format("(totalling  %.1f)\n", div1)); 
