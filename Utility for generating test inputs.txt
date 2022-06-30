@@ -1,0 +1,29 @@
+
+/* Utility for printing a string of random numbers with, then without, intervening commas.
+Former is useful for hard-coding lists of Doubles to test Divvier2, while latter
+can be pasted used for input to original Divvier GUI to cross-check.
+Not part of either Divvier program.
+*/
+
+import java.util.Random;
+class LoadsaNumbers // Prints a string of random numbers with, then without,
+{                   // intervening commas
+    public static void main(String[] args)
+    {
+        StringBuilder withCommas = new StringBuilder();
+        StringBuilder withoutCommas = new StringBuilder();
+        
+        // Can change range and quantity of numbers via pair of args to double()
+        // and limit() calls respectively, and number decimal places via numeral
+        // before the "f" in the String.format() calls, below...
+        new Random().doubles(1.0, 100.0).limit(100).forEach(d -> {
+                withCommas.append(String.format("%.1f", d) + ", ");
+                withoutCommas.append(String.format("%.1f", d) + " ");
+                });
+                
+        System.out.println(withCommas.substring(0, withCommas.length() - 2)); 
+        // (...without trailing comma (and space))
+        System.out.println("");
+        System.out.println(withoutCommas);
+    }    
+}
