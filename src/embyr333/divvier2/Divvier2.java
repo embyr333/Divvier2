@@ -21,7 +21,7 @@ on ‘if (tempDiv1 <= half – item)’  condition being true.
 - Then, if get to a point where the program seems like it might handle any input, then
  use the class to replace the Divvier_to_11_IG and Divvier_unlimited_IG classes used there
 
-14th commit, at date_time  220630_2206
+14th commit, at date_time  220630_2206   ...no changes, just re-commiting to change erroneous commit message
  */
 
 package embyr333.divvier2;
