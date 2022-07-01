@@ -2,26 +2,22 @@
 Objective and proposed approach: See comment atop first commit (220619_1442)
 
 Done here: 
-- Further testing
-- Also, slight tweak to display both split subcollections in ascending 
-(strictly, non-descending) order
+- Tried to think of at least one input list for which program would NOT generate
+an as-equitable-as-possible split, but did not come up with anything yet. 
+Was coming around to a feeling the algorithm is actially general, though I had not 
+ come up with a way to put it into words /expressions yet...
+...but then tried a few more automatically /part-automatically -generated inputs 
+and exposed more than one fail! So...
 
 Next: 
-- Try to think of at least one input list for which program would NOT generate
-an as-equitable-as-possible split (though I would prefer if there is none!)
-Not confident that I would be able to conceptually rule in or out whether the 
-algorithm is a general solution. 
-If I do find a 'fail', might try to generate more item combinations by having
-the outer loop start in turn at ALL occurances of ‘multi-occurrance items, 
-instead of going to a new item (key in map). Could probably do this by removing 
-just one occurance from map before starting again from beginning of map. 
-Otherwise, could revert to just processing a list, after sorting it, without 
-converting data to map at all...just have use of each successive element contingent  
-on ‘if (tempDiv1 <= half – item)’  condition being true.
-- Then, if get to a point where the program seems like it might handle any input, then
- use the class to replace the Divvier_to_11_IG and Divvier_unlimited_IG classes used there
+- Change algorithm as described in comment below code here, test
+- Then, if get to a point where the program seems like it might handle any input, 
+ use the class to replace the Divvier_to_11_IG and Divvier_unlimited_IG classes in 
+a copy of the original Divvier (currently named Divvier_in_GUI, but change (back)
+t just "Divvier" first)
 
-14th commit, at date_time  220630_2206   ...no changes, just re-commiting to change erroneous commit message
+(No longer numbering these source-code commits, just naming with a 'time-stamp'
+Commit date_time  220701_1407
  */
 
 package embyr333.divvier2;
@@ -38,77 +34,39 @@ class Divvier2
 {
     public static void main(String[] args)
     {
-        // Comments after these test calls show the expected difference 
-        // between the two splits; msome may be commented out after verifying 
+        // Comments after these (further) test calls show the expected difference 
+        // between the two splits; some may be commented out after verifying 
         // expected result, at least until code changed again
         
-//        process(Arrays.asList(1.0, 1.0, 1.0, 5.0)); // 2.0
-//        process(Arrays.asList(1.0, 1.0, 1.0, 5.0, 5.0)); // 1.0
-//        process(Arrays.asList(1.0, 1.0, 1.0, 1.0, 0.0)); // 0.0
-//        process(Arrays.asList(1.0, 1.0, 1.0, 1.0, 1.0, 0.0)); // 1.0
-//        process(Arrays.asList(1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0)); // 1.0
-//        process(Arrays.asList(1.0, 1.0, 1.0, 5.0, 2.0, 2.0, 2.0)); // 0.0
-//        process(Arrays.asList(7.0, 5.0, 2.0, 2.0, 2.0)); // 0.0
-//        process(Arrays.asList(9.0, 6.0, 7.0, 11.0)); // 1.0
+        // --a few more tests
         
-        // --further tests passed...
+        process(Arrays.asList(5.0, 5.0, 5.0, 4.0, 4.0)); // 3.0
+        process(Arrays.asList(9.0, 9.0, 6.0, 5.0, 3.0, 3.0, 3.0)); // 2.0
+        process(Arrays.asList(7.0, 7.0, 5.0, 3.0, 2.0)); // 0.0
+        process(Arrays.asList(7.0, 7.0, 5.0, 3.0, 2.0, 1.0, 1.0)); // 0.0
         
-//        process(Arrays.asList(9.0, 6.0, 7.0, 10.0)); // 0.0
-//        process(Arrays.asList(9.0, 6.0, 7.0, 9.0)); // 1.0
-//        process(Arrays.asList(9.0, 6.0, 7.0, 8.0)); // 0.0
-//        process(Arrays.asList(9.0, 7.0, 6.0, 8.0)); // 0.0
-//        process(Arrays.asList(9.0, 6.0, 8.0, 7.0)); // 0.0
+        // Range 1-100 (as before), 20 random items
+        process(Arrays.asList(72.8, 93.6, 13.9, 52.1, 67.5, 12.8, 21.1, 30.3, 72.0, 
+                62.8, 63.2, 2.5, 73.4, 20.4, 25.0, 46.8, 49.8, 85.0, 87.1, 89.2)); // 0.1
+        // 0.1 is result from original Divvier (got each time on 100x turbo setting),
+        // via many different splits (reciprocal subcollections), none of which
+        // happened to match the split from Divvier2
         
-        // (NB: will just write input elements in numerical order from now, 
-        // as I know the sorting is (of course) reliable)
+        // Range 1-100 (as before), 18 random items with last one repeated 3x
+        process(Arrays.asList(60.4, 62.0, 44.3, 15.2, 30.2, 21.2, 91.5, 42.6, 56.6, 
+                51.5, 14.5, 19.5, 14.6, 98.8, 3.4, 24.1, 64.0, 42.7, 42.7, 42.7)); // 0.1
+        // Aha - slight fail - Divvier2 gives 0.5, cf original Divvier shows a number 
+        // of splits with diff only 0.1
         
-        // Tests with 4 and 5 elements can be definitively verified easily via  
-        // original Divvier (which displays all possible lowest splits for 4 & 5)
-//        process(Arrays.asList(1.0, 2.0, 3.0, 4.0)); // 0.0
-//        process(Arrays.asList(1.0, 2.0, 3.0, 4.0, 5.0)); // 1.0
-//        process(Arrays.asList(1.0, 2.0, 3.0, 4.0, 6.0)); // 0.0
-//        process(Arrays.asList(1.0, 2.0, 9.0, 22.0, 57.0)); // 23.0
-//        process(Arrays.asList(1.0, 2.0, 9.0, 22.0, 57.0, // (duplicatiing that)
-//                              1.0, 2.0, 9.0, 22.0, 57.0)); // 0.0
-//        process(Arrays.asList(2.0, 7.0, 15.0, 22.0)); // 2.0
-//        process(Arrays.asList(2.0, 7.0, 10.0, 15.0, 22.0)); // 2.0
-//        process(Arrays.asList(0.0, 7.0, 10.0, 15.0, 22.0)); // 4.0
-//        process(Arrays.asList(2.0, 7.0, 10.0, 22.0, 111.0)); // 70.0
+        // Range 1-1000, 20 random items 
+        process(Arrays.asList(616.1, 23.7, 291.3, 683.4, 351.7, 713.9, 782.9, 137.8, 189.3, 
+                631.5, 834.4, 130.9, 61.2, 281.7, 874.3, 161.0, 2.8, 865.8, 903.4, 771.5)); // 0.0
+        // cf Divvier2 only gets to 4.8!
+        // (could also do tests with eg better mix of 1, 2, 3 digit items, and 
+        // including numbers between 0 and 1 (however bear in mind output is currently
+        // displayed only to first decimal place (could be changed though)),
+        // but first try to improve reliability with idea in comment after code here
         
-        // For tests with 6-11 elements original Divvier gives 'almost-certain'
-        // results, so if outputs here agree, will consider them verified...
-        // Example of an 8-item aand an 11-item input...
-//        process(Arrays.asList(2.0, 5.0, 9.0, 11.0, 15.0, 45.0, 49.0, 60.0)); // 2.0
-//        process(Arrays.asList(3.0, 6.0, 12.0, 19.0, 21.0, 37.0, 
-//                37.0, 41.0, 44.0, 48.0, 63.0)); // 1.0 
-        // (Original Divvier gives also a number of other splits with same 
-        // minimaal diff of 1.0 (which is why it would still have complementary
-        // utility if user wanted to know about them)
-        
-        // Example of 25-item input
-//        process(Arrays.asList(78.9, 14.3, 85.7, 30.7, 72.0, 97.5, 65.9, 19.5, 
-//                49.3, 70.0, 6.3, 37.6, 29.6, 57.1, 12.3, 86.7, 60.0, 13.1, 8.9, 
-//                58.5, 64.2, 52.1, 48.6, 81.0, 54.2)); // 0.0
-        // Verified: Original Divvier gives 0.0 most of the time on "10x turbo" 
-        // setting, and can't get any smaller than zero
-        
-        // Example of 100-item input
-        process(Arrays.asList(67.9, 94.0, 97.7, 27.8, 14.4, 38.6, 53.5, 85.0, 
-                58.9, 96.6, 34.8, 88.2, 36.3, 49.1, 25.8, 48.1, 20.6, 81.1, 92.3, 
-                54.6, 37.0, 66.2, 18.4, 38.9, 7.4, 96.8, 42.2, 59.5, 48.4, 52.3, 
-                10.7, 74.7, 66.0, 24.7, 81.3, 24.6, 15.8, 67.6, 10.5, 40.7, 90.6, 
-                89.3, 30.3, 86.1, 97.5, 34.1, 83.3, 7.3, 91.8, 84.2, 5.7, 73.3, 
-                33.1, 45.6, 44.3, 97.7, 76.7, 40.0, 36.6, 82.4, 60.1, 3.2, 58.2, 
-                82.0, 51.9, 39.4, 84.9, 54.7, 38.4, 56.9, 53.6, 81.4, 91.4, 77.7, 
-                69.0, 54.9, 7.0, 90.6, 40.4, 33.9, 38.8, 97.9, 13.5, 99.1, 69.3, 
-                74.5, 78.0, 48.6, 23.5, 59.5, 73.0, 89.5, 9.3, 68.1, 51.8, 41.3, 
-                24.2, 22.5, 8.1, 42.0)); // 0.0 ...obtained after many runs of 
-                // original Divvier (even 100x turbo struggled!); interestingly,  
-                // two splits I got were different from each other, and also from
-                // the (also diff=0.0) split from Divvier2 here...see file 
-                // "100-item input test.txt" for the splits
-        
-        // add the utility file to the git, push-------------------------------------------------------------------------
     }    
 
     static void process(List<Double> itemList) 
@@ -142,12 +100,7 @@ class Divvier2
 
         // (Maybe rethink later how many times it is necessary for the outer loop to iterate below)
 
-        
-        // --minor change: realised that call to keySet() not needed
-//        int outerLimit = bigToSmallItemCounts.keySet().size(); 
-        int outerLimit = bigToSmallItemCounts.size(); 
-//        System.out.println("outerLimit = " + outerLimit); // (temp check)
-        
+        int outerLimit = bigToSmallItemCounts.size();         
         
         for (int a = 0; a < outerLimit; ++a) 
         {    
@@ -155,8 +108,6 @@ class Divvier2
             double tempDiv1 = 0.0;
             List<Double> tempItemsUsed = new ArrayList<>();            
             
-//            System.out.println("bigToSmallItemCounts " + bigToSmallItemCounts); // (temp internediate check)
-
             // Now fill tempDiv1 as near as possible to half without exceeding 
             for (Double item : bigToSmallItemCounts.keySet()) 
             {            
@@ -184,8 +135,6 @@ class Divvier2
             // as a source of possible best-division initial item
             bigToSmallItemCounts.remove(
                     bigToSmallItemCounts.keySet().stream().findFirst().get());
-            
-//            System.out.println("bigToSmallItemCounts " + bigToSmallItemCounts); // (temp internediate check)
         }
 
         List<Double> itemsNotUsed = new ArrayList<>(itemList); // First make a copy
@@ -200,19 +149,18 @@ class Divvier2
         // the nested loop above if the else...break statement is removed)
         
         
-        // --just for convenience of viewing, decided to arrange itemsNotUsed
+        // Just for convenience of viewing, decided to arrange itemsNotUsed
         // (previously unordered, unless input data happens to be in order)
         // in ascending (strictly, non-descending) order also..
         itemsNotUsed.sort(Comparator.naturalOrder());
         
-        // --then decided to also dispaly itemsUsed in ascending order
+        // Also decided to also dispaly itemsUsed in ascending order
         Collections.reverse(itemsUsed);
         
         // ...I realise at this point there may be many redundancies in sorting 
         // and ordering along the way, and if/when existing code is verified
         // as reliable for optimal split, will go back and try to improve
         // conciseness + efficiency!
-        
 
         // (Can add (back) extra line-breaks displaying the strings below in 
         // TextArea on integration into the preexisting GUI setup)
@@ -228,3 +176,13 @@ class Divvier2
         System.out.println("");
     }
 }
+
+/*
+If I do find a 'fail', might try to generate more item combinations by having
+the outer loop start in turn at ALL occurances of ‘multi-occurrance items, 
+instead of going to a new item (key in map). Could probably do this by removing 
+just one occurance from map before starting again from beginning of map. 
+Otherwise, could revert to just processing a list, after sorting it, without 
+converting data to map at all...just have use of each successive element contingent  
+on ‘if (tempDiv1 <= half – item)’  condition being true.
+*/
