@@ -1,29 +1,17 @@
 /*
-Objective and proposed approach: See comment atop first commit (220619_1442)
+Objective and proposed approach for the Divvier2 program/project a a whole: 
+See comment atop first commit (220619_1442) of the Divvier2 clas/file
 
-Done here: 
-- Tried to think of at least one input list for which program would NOT generate
-an as-equitable-as-possible split, but did not come up with anything yet. 
-Was coming around to a feeling the algorithm is actially general, though I had not 
- come up with a way to put it into words /expressions yet...
-...but then tried a few more automatically /part-automatically -generated inputs 
-and exposed more than one fail! So...
+Changes made here to use with GUI:
+- Removed main method
+- Changed output tatement to print to GUI rather than console 
 
-Next: 
-- Change algorithm as described in comment below code here, test
-- Then, if get to a point where the program seems like it might handle any input, 
- use the class to replace the Divvier_to_11_IG and Divvier_unlimited_IG classes in 
-a copy of the original Divvier (currently named Divvier_in_GUI, but change (back)
-t just "Divvier" first)
-
-(No longer numbering these source-code commits, just naming with a 'time-stamp'
-Commit date_time  220701_1407
+Commit date_time  220713_344
  */
 
 package embyr333.divvier2;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -31,44 +19,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 class Divvier2
-{
-    public static void main(String[] args)
-    {
-        // Comments after these (further) test calls show the expected difference 
-        // between the two splits; some may be commented out after verifying 
-        // expected result, at least until code changed again
-        
-        // --a few more tests
-        
-        process(Arrays.asList(5.0, 5.0, 5.0, 4.0, 4.0)); // 3.0
-        process(Arrays.asList(9.0, 9.0, 6.0, 5.0, 3.0, 3.0, 3.0)); // 2.0
-        process(Arrays.asList(7.0, 7.0, 5.0, 3.0, 2.0)); // 0.0
-        process(Arrays.asList(7.0, 7.0, 5.0, 3.0, 2.0, 1.0, 1.0)); // 0.0
-        
-        // Range 1-100 (as before), 20 random items
-        process(Arrays.asList(72.8, 93.6, 13.9, 52.1, 67.5, 12.8, 21.1, 30.3, 72.0, 
-                62.8, 63.2, 2.5, 73.4, 20.4, 25.0, 46.8, 49.8, 85.0, 87.1, 89.2)); // 0.1
-        // 0.1 is result from original Divvier (got each time on 100x turbo setting),
-        // via many different splits (reciprocal subcollections), none of which
-        // happened to match the split from Divvier2
-        
-        // Range 1-100 (as before), 18 random items with last one repeated 3x
-        process(Arrays.asList(60.4, 62.0, 44.3, 15.2, 30.2, 21.2, 91.5, 42.6, 56.6, 
-                51.5, 14.5, 19.5, 14.6, 98.8, 3.4, 24.1, 64.0, 42.7, 42.7, 42.7)); // 0.1
-        // Aha - slight fail - Divvier2 gives 0.5, cf original Divvier shows a number 
-        // of splits with diff only 0.1
-        
-        // Range 1-1000, 20 random items 
-        process(Arrays.asList(616.1, 23.7, 291.3, 683.4, 351.7, 713.9, 782.9, 137.8, 189.3, 
-                631.5, 834.4, 130.9, 61.2, 281.7, 874.3, 161.0, 2.8, 865.8, 903.4, 771.5)); // 0.0
-        // cf Divvier2 only gets to 4.8!
-        // (could also do tests with eg better mix of 1, 2, 3 digit items, and 
-        // including numbers between 0 and 1 (however bear in mind output is currently
-        // displayed only to first decimal place (could be changed though)),
-        // but first try to improve reliability with idea in comment after code here
-        
-    }    
-
+{   
     static void process(List<Double> itemList) 
     { 
         double total = 0; // To hold sum of itemList (input list item numerical values)   
@@ -164,25 +115,24 @@ class Divvier2
 
         // (Can add (back) extra line-breaks displaying the strings below in 
         // TextArea on integration into the preexisting GUI setup)
-        System.out.print(String.format("Smallest difference is: %.1f\n", (total - (2 * div1)))); 
-        System.out.print(String.format("between sub-collection         %s\n", itemsUsed)); 
-        System.out.print(String.format("(totalling  %.1f)\n", div1)); 
-        System.out.print(String.format("and reciprocal sub-collection  %s\n", itemsNotUsed)); 
-        System.out.print(String.format("(totalling  %.1f)\n", (total - div1))); 
-        // ...and also add this note (disabled here for output economy while testing)
-//        System.out.println("(However there may be other combinations that give the same split,\n"
-//                + "which could be searched for with the originl 'Divvier' program,\n"
-//                + "which uses random sampling for input collections of >5 items)"); 
-        System.out.println("");
+        
+        
+        Div2GUI.getOutputJTextArea().append(String.format("Divvier2:\n")); 
+        
+        // --replaced console print statements with equivalent placement of output in the output textarea
+        // Note that I would usually begin with a setText() call, but using append()
+        // for all items means that output statements for the Divvier2 and Divvier2b classes 
+        // can have identical code, and either class' method can be called first in DivGUI class
+        Div2GUI.getOutputJTextArea().append(String.format("Smallest difference is: %.1f\n", (total - (2 * div1)))); 
+        Div2GUI.getOutputJTextArea().append(String.format("between sub-collection            %s\n", itemsUsed)); 
+        Div2GUI.getOutputJTextArea().append(String.format("(totalling  %.1f)\n", div1)); 
+        Div2GUI.getOutputJTextArea().append(String.format("and reciprocal sub-collection  %s\n", itemsNotUsed)); 
+        Div2GUI.getOutputJTextArea().append(String.format("(totalling  %.1f)\n", (total - div1))); 
+
+        Div2GUI.getOutputJTextArea().append("(However there may be other combinations that give the same or more \n"
+                + "equitable split which could be searched for with the originl 'Divvier' program,\n"
+                + "which uses random sampling for input collections of >5 items)"); 
+
+        Div2GUI.getOutputJTextArea().append("\n\n");
     }
 }
-
-/*
-If I do find a 'fail', might try to generate more item combinations by having
-the outer loop start in turn at ALL occurances of ‘multi-occurrance items, 
-instead of going to a new item (key in map). Could probably do this by removing 
-just one occurance from map before starting again from beginning of map. 
-Otherwise, could revert to just processing a list, after sorting it, without 
-converting data to map at all...just have use of each successive element contingent  
-on ‘if (tempDiv1 <= half – item)’  condition being true.
-*/

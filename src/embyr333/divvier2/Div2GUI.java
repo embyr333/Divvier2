@@ -1,11 +1,34 @@
 /*
-Copy of Divvier project/program' Div2GUI 220706_2316 ith name changed to Div2GUI
-awaiting further modification for use in Divvier2 program/project...
+Thi sclas originated as copy of Divvier project/program' Div2GUI 220706_2316  
+to Div2GUI; in process of modification for use in Divvier2 program/project... 
 
-(First) commit date_time  220708_1054
+Further changes made here:
+- Package rename to reflect new location
+- Removed turboJButton and associated items (loops variable, getLoops() 
+pertaining to use of Divvier' DivFor1plu class
+- Removed use Divvier program 4-, 5-, 6-11 and plus -procesing clases' (files not 
+present) process() methods, calling intead Divvier2's process() (will work in Divvier2b 
+and any subsequent later; alo might or might not restore use of the 4- and 5- classes)
+- (Changed Divvier2, Divvier2b clases to print to GUI rather than console)
+- Removed the 'at least 4 items' stipulation (not esential to remind user that 
+dividing smaller collections i strivial/irrelevant!), and might be ueful to
+allo wproceing of 2 or 3 item collection sin further teting)
+
+To-do' sinclude:
+- Remove the JTextFields on left and aociated toggle with use of input JTetArea
+(Used the field set in earlier development of original Divvier incarnation,
+but it's easier to enter collection in single text area. After adding the latter,
+kept the former more as an excuse to setup an automatic toggle between use of
+one and the other (entering in firt diable second and vice-verse, for fun.)
+- Update infoButton message, or remove button/popup
+- Update any labels /other diplayed tet a needed
+- Make sure can see both Divvier2 and Divvier2b outputs when have removed unneeded 
+stuff from window, modifying organiation of window as needed
+
+Commit date_time   220713_344
 */
 
-package embyr333.divvier;
+package embyr333.divvier2; // --location in this project
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -26,43 +49,39 @@ public class Div2GUI extends JFrame
     
     private JButton infoJButton;
     
-    private JLabel numColJLabel; // label above column of 11 JTextFields for input
-    private JLabel[] numberJLabels = new JLabel[11]; // labels to left of individual JTextFields 
-    private JTextField[] numberJTextFields = new JTextField[11]; // array of 11 JTextFields for input   
+    private JLabel numColJLabel; // Label above column of 11 JTextFields for input
+    private JLabel[] numberJLabels = new JLabel[11]; // Labels to left of individual JTextFields 
+    private JTextField[] numberJTextFields = new JTextField[11]; // Array of 11 JTextFields for input   
     
     private JLabel allnumbersJLabel; // label above...
     private JTextArea allnumbersJTextArea; // JTextArea that acts as an alternative input interface
     private JScrollPane allnumbersJScrollPane; // ...scrollpane for above    
         
-    private JButton turboJButton; // toggles value of 'loops' by 10x, 100x (then back to defailt)
+//    private JButton turboJButton; // Toggles value of 'loops' by 10x, 100x (then back to defailt)
 
-    private JButton clearJButton; // clears input/outputJTextArea fields/areas 
+    private JButton clearJButton; // Clears input/outputJTextArea fields/areas 
 
-    private JButton submitJButton; // submits input data for number-extraction (this class; --> processing in other classs)
+    private JButton submitJButton; // Submits input data for number-extraction (this class; --> processing in other classs)
     
-    private static JTextArea outputJTextArea; // recieves reports from the processing classes
+    private static JTextArea outputJTextArea; // Recieves reports from the processing classes
 
-    private ArrayList<Double> numbers = new ArrayList<Double>(); // stores the input numbers before transfer to processing classes
+    private ArrayList<Double> numbers = new ArrayList<Double>(); // Stores the input numbers before transfer to processing classes
     
-    private boolean ignoreZeros; // for option to ignore any zeros in input (Can alternatively be static - does not seem to make a difference)
-    
-    private static int loops = 1000; // number of loops to be run by DivFor12plus processing algorithm     
-    public static int getLoops(){
-        return loops;
-    }
+    private boolean ignoreZeros; // For option to ignore any zeros in input (Can alternatively be static - does not seem to make a difference)
     
     public static JTextArea getOutputJTextArea()
     {
         return outputJTextArea;   
     }
     
-    // constructor
+    // Constructor
     public Div2GUI()
     {
         setLayout(null);
         
-        instructionsJTextArea = new JTextArea("Allows you to divide a collection of numbers into two subcollections as evenly as possible\n\n"
-                + "Enter the numbers (at least four) you want to divvy...");
+        instructionsJTextArea = new JTextArea("Allows you to divide a collection "
+                + "of numbers into two subcollections as evenly as possible\n\n"
+                + "Enter the numbers you want to divvy..."); // --removed the "at least 4" intruction
         instructionsJTextArea.setBounds(20, 40, 500, 80);
         instructionsJTextArea.setEditable(false);
         instructionsJTextArea.setOpaque(false);
@@ -130,34 +149,7 @@ public class Div2GUI extends JFrame
             }
         );          
         add(infoJButton);         
-        
-        turboJButton = new JButton("Click for 10x turbo");
-        turboJButton.setBounds(320, 400, 180, 20);
-        turboJButton.addActionListener(
-            new ActionListener() 
-            {
-                public void actionPerformed(ActionEvent e) 
-                {               
-                    if(loops == 1000)
-                    {    
-                        loops = 10000;
-                        turboJButton.setText("Click for 100x turbo");
-                    }    
-                    else if (loops == 10000)
-                    {    
-                        loops = 100000;
-                        turboJButton.setText("Click for default");
-                    }                            
-                    else
-                    {    
-                        loops = 1000;
-                        turboJButton.setText("Click for 10x turbo");
-                    }                         
-                }
-            }
-        );          
-        add(turboJButton);          
-        
+                
         clearJButton = new JButton("Clear");
         clearJButton.setBounds(360, 460, 100, 20);
         clearJButton.addActionListener(
@@ -240,19 +232,11 @@ public class Div2GUI extends JFrame
                     ArrayList<Double> numbersCopy = new ArrayList<Double>();
                     for(int i = 0; i < numbers.size(); i++)
                         numbersCopy.add(numbers.get(i));
-                    
-                    // Send data to the processing classes
-                    if(numbersCopy.size() < 4) 
-                        outputJTextArea.setText(String.format("Sorry, this program is not relevant for collections of less than four numbers\n")); 
-                    if(numbersCopy.size() == 4)
-                        DivFor4.process(numbersCopy.get(0), numbersCopy.get(1), numbersCopy.get(2), numbersCopy.get(3));
-                    if(numbersCopy.size() == 5)
-                        DivFor5.process(numbersCopy.get(0), numbersCopy.get(1), numbersCopy.get(2), numbersCopy.get(3), numbersCopy.get(4));
-                    if(numbersCopy.size() > 5 && numbersCopy.size() < 12)
-                        DivFor6to11.process(numbersCopy);
-                    if(numbersCopy.size() >= 12)
-                        DivFor12plus.process(numbersCopy);         
-                    
+
+                    // Send data to the processing classes --now just using the new approach(e)
+                    Divvier2.process(numbersCopy);                         
+                    Divvier2b.process(numbersCopy);            
+
                     // Popup if there are values of zero in the input number collection 
                     for(int i = 0; i < numbers.size(); i++)
                     {          
