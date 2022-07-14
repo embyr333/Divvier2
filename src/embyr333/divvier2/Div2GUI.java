@@ -1,34 +1,23 @@
 /*
-Thi sclas originated as copy of Divvier project/program' Div2GUI 220706_2316  
+This class originated as copy of Divvier project/program' Div2GUI 220706_2316  
 to Div2GUI; in process of modification for use in Divvier2 program/project... 
 
 Further changes made here:
-- Package rename to reflect new location
-- Removed turboJButton and associated items (loops variable, getLoops() 
-pertaining to use of Divvier' DivFor1plu class
-- Removed use Divvier program 4-, 5-, 6-11 and plus -procesing clases' (files not 
-present) process() methods, calling intead Divvier2's process() (will work in Divvier2b 
-and any subsequent later; alo might or might not restore use of the 4- and 5- classes)
-- (Changed Divvier2, Divvier2b clases to print to GUI rather than console)
-- Removed the 'at least 4 items' stipulation (not esential to remind user that 
-dividing smaller collections i strivial/irrelevant!), and might be ueful to
-allo wproceing of 2 or 3 item collection sin further teting)
-
-To-do' sinclude:
-- Remove the JTextFields on left and aociated toggle with use of input JTetArea
+- Removed the JTextFields on left and associated toggle with use of input JTetArea
 (Used the field set in earlier development of original Divvier incarnation,
 but it's easier to enter collection in single text area. After adding the latter,
 kept the former more as an excuse to setup an automatic toggle between use of
-one and the other (entering in firt diable second and vice-verse, for fun.)
-- Update infoButton message, or remove button/popup
-- Update any labels /other diplayed tet a needed
-- Make sure can see both Divvier2 and Divvier2b outputs when have removed unneeded 
-stuff from window, modifying organiation of window as needed
+one and the other (entering in first disable second and vice-verse, for fun.)
+- Changed position of components (and idened input textarea) to make ue of vacated space
+- Removed unneeded labels
 
-Commit date_time   220713_344
+To-do's include:
+- Update infoButton message, or remove button/popup and put decription in instructionsJTextArea
+
+Commit date_time   220715_0031
 */
 
-package embyr333.divvier2; // --location in this project
+package embyr333.divvier2; 
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -39,9 +28,6 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 
 public class Div2GUI extends JFrame
 {
@@ -49,16 +35,9 @@ public class Div2GUI extends JFrame
     
     private JButton infoJButton;
     
-    private JLabel numColJLabel; // Label above column of 11 JTextFields for input
-    private JLabel[] numberJLabels = new JLabel[11]; // Labels to left of individual JTextFields 
-    private JTextField[] numberJTextFields = new JTextField[11]; // Array of 11 JTextFields for input   
-    
-    private JLabel allnumbersJLabel; // label above...
-    private JTextArea allnumbersJTextArea; // JTextArea that acts as an alternative input interface
+    private JTextArea allnumbersJTextArea; // JTextArea for user input
     private JScrollPane allnumbersJScrollPane; // ...scrollpane for above    
         
-//    private JButton turboJButton; // Toggles value of 'loops' by 10x, 100x (then back to defailt)
-
     private JButton clearJButton; // Clears input/outputJTextArea fields/areas 
 
     private JButton submitJButton; // Submits input data for number-extraction (this class; --> processing in other classs)
@@ -81,68 +60,28 @@ public class Div2GUI extends JFrame
         
         instructionsJTextArea = new JTextArea("Allows you to divide a collection "
                 + "of numbers into two subcollections as evenly as possible\n\n"
-                + "Enter the numbers you want to divvy..."); // --removed the "at least 4" intruction
-        instructionsJTextArea.setBounds(20, 40, 500, 80);
+                + "Enter the numbers you want to divvy, seperated by spaces / tabs / returns"); // --altered
+        instructionsJTextArea.setBounds(20, 20, 500, 80); // --poition, dimensions altered
         instructionsJTextArea.setEditable(false);
         instructionsJTextArea.setOpaque(false);
         add(instructionsJTextArea);          
-        
-        numColJLabel = new JLabel("...here");
-        numColJLabel.setBounds(95, 130, 50, 20);
-        add(numColJLabel); 
-        
-        // Inactivates the JTextFields if anything is entered in the JTextArea
-        //    and reactivates them if emptied, and vice-verse
-        InputChoiceHandler inputChoiceHandler = new InputChoiceHandler();        
-        
-        // Create input JTextFields and their labels, register with inputChoiceHandler
-        for(int i = 0; i < 11; i++)
-        {    
-            numberJLabels[i] = new JLabel("Number " + (i + 1));
-            numberJLabels[i].setBounds(20, 160 + i*40, 80, 20);
-            add(numberJLabels[i]);
-        }    
-        for(int i = 0; i < 11; i++)
-        {    
-            numberJTextFields[i] = new JTextField();
-            numberJTextFields[i].setBounds(95, 160 + i*40, 100, 20);            
-            numberJTextFields[i].getDocument().addDocumentListener(inputChoiceHandler);
-            add(numberJTextFields[i]);
-        }          
-        
-        // Create scrollable input JTextArea and its label, register with inputChoiceHandler
-        allnumbersJLabel = new JLabel("...or here, seperated by spaces / tabs / returns");
-        allnumbersJLabel.setBounds(260, 130, 300, 20);
-        add(allnumbersJLabel);         
+           
         allnumbersJTextArea = new JTextArea(10, 20); // could clarify significance of these row,col parameters & whether want to alter
         allnumbersJTextArea.setLineWrap(true);
         allnumbersJTextArea.setWrapStyleWord(true); 
-        allnumbersJTextArea.getDocument().addDocumentListener(inputChoiceHandler);
         allnumbersJScrollPane = new JScrollPane(allnumbersJTextArea);
-        allnumbersJScrollPane.setBounds(260, 160, 300, 100);
+        allnumbersJScrollPane.setBounds(20, 100, 540, 100); // --poition, dimensions altered
         add(allnumbersJScrollPane);        
         
         infoJButton = new JButton("What is this nonsense?");
-        infoJButton.setBounds(320, 320, 180, 20);
+        infoJButton.setBounds(200, 230, 180, 20); // --poition, dimensions altered
         infoJButton.addActionListener(new ActionListener() 
             {
                 public void actionPerformed(ActionEvent e) 
                 {                    
                     JOptionPane.showMessageDialog(Div2GUI.this /* or: rootPane */, 
                         "<html><p style='width:380px; font-weight:normal'><br>"
-                                + "Ever needed to divide a small number of items "
-                                + "(e.g. pieces of fruit of random weight) into two collections, "
-                                + "as evenly as possible? In the case of 3 items, the answer is, "
-                                + "of course, always to divide as “biggest vs. other two”. <br><br> "
-                                + "Here is a small tool to take the guesswork, or tedious comparison "
-                                + "of the various combinations, out of the situation for larger collections. <br><br>"
-                                + "Over 5 items, there is a random component to the algorithms used "
-                                + "(not all combinations may be sampled), however the process for "
-                                + "6-11 is quite reliable in identifying the best split. "
-                                + "The process used for 12 or more items is not guarenteed to do so, "                                
-                                + "though the 'turbo' button can be used to increase the reliability, "                                
-                                + "at the expense of speed - it cycles between 1x, 10x and 100x the default "
-                                + "number of times that the processing algorithm loops for collections of >11. " 
+                                + "***updated decription to be added*** " // --placeholder text for updating
                                 + "<br><br></p></HTML>", 
                             "What this nonsense is", JOptionPane.INFORMATION_MESSAGE); 
                 }
@@ -151,17 +90,13 @@ public class Div2GUI extends JFrame
         add(infoJButton);         
                 
         clearJButton = new JButton("Clear");
-        clearJButton.setBounds(360, 460, 100, 20);
+        clearJButton.setBounds(240, 280, 100, 20); // --poition, dimensions altered
         clearJButton.addActionListener(
             new ActionListener() 
             {
                 public void actionPerformed(ActionEvent e) 
                 {                                        
-                    for(int i = 0; i < 11; i++)
-                        numberJTextFields[i].setText("");
-         
                     allnumbersJTextArea.setText("");
-
                     outputJTextArea.setText("");                                
                 }
             }
@@ -170,7 +105,7 @@ public class Div2GUI extends JFrame
         
         // Create the submitJButton with anonymous event handler
         submitJButton = new JButton("Submit");
-        submitJButton.setBounds(320, 540, 180, 40);
+        submitJButton.setBounds(200, 330, 180, 40); // --poition, dimensions altered
         submitJButton.addActionListener(new ActionListener() 
             { 
                 public void actionPerformed(ActionEvent e) 
@@ -203,29 +138,7 @@ public class Div2GUI extends JFrame
                             JOptionPane.showMessageDialog(Div2GUI.this, "Please enter only numbers",
                                     "Invalid Input...", JOptionPane.INFORMATION_MESSAGE);                            
                         }
-                    }
-                    // otherwise extract entries in JTextField 
-                    else
-                        try
-                        {
-                            for(int i = 0; i < numberJTextFields.length; i++)
-                                if(!numberJTextFields[i].getText().equals(""))
-                                {    
-                                    value = Double.parseDouble(numberJTextFields[i].getText());
-                                    
-                                    if(ignoreZeros == false)
-                                        numbers.add(value);
-                            
-                                    else if(value != 0)
-                                        numbers.add(value);    
-                                }
-                                ignoreZeros = false; // reset to default behaviour
-                        }
-                        catch(NumberFormatException numberFormatException)
-                        {
-                            JOptionPane.showMessageDialog(Div2GUI.this, "Please enter only numbers",
-                                    "Invalid Input...", JOptionPane.INFORMATION_MESSAGE);  
-                        }    
+                    }  
                     
                     // Preserve integrity of 'numbers' by making a 'deep' copy to send to procession classes 
                     // (_to_11, at least, alters the ArrayList during calculations
@@ -262,76 +175,12 @@ public class Div2GUI extends JFrame
         add(submitJButton);      
         
         outputJTextArea = new JTextArea();
-        outputJTextArea.setBounds(20, 620, 560, 300);
+        outputJTextArea.setBounds(20, 400, 560, 300); // --poition, dimensions altered
         outputJTextArea.setLineWrap(true);
         outputJTextArea.setWrapStyleWord(true); 
         outputJTextArea.setEditable(false);
         outputJTextArea.setOpaque(false);
         add(outputJTextArea);         
     } // End constructor
-    
-    private class InputChoiceHandler implements DocumentListener
-    {
-        public void insertUpdate(DocumentEvent e) 
-        {
-            if( !numberJTextFields[0].getText().equals("") ||
-                !numberJTextFields[1].getText().equals("") ||
-                !numberJTextFields[2].getText().equals("") ||
-                !numberJTextFields[3].getText().equals("") ||
-                !numberJTextFields[4].getText().equals("") ||
-                !numberJTextFields[5].getText().equals("") ||
-                !numberJTextFields[6].getText().equals("") ||
-                !numberJTextFields[7].getText().equals("") ||
-                !numberJTextFields[8].getText().equals("") ||
-                !numberJTextFields[9].getText().equals("") ||
-                !numberJTextFields[10].getText().equals("") 
-               )
-                { 
-                    allnumbersJTextArea.setEditable(false);
-                    allnumbersJTextArea.setOpaque(false);
-                    // any way to make the border grey, as for disabled JTestField?
-                }    
-            // ...this is not elegant but saves on processing cf checking in a loop of straight 'if' statements
-            
-            if(!allnumbersJTextArea.getText().equals(""))
-               for(int i = 0; i < 11; i++)
-                {    
-                    numberJTextFields[i].setEditable(false);
-                }                       
-            // ...this works fine, but is there way to avoid the wasted computation involved in calling
-            //    it every time there is a new character inserted in the TextArea (after the first)?...
-        } // End method insertUpdate
 
-        public void removeUpdate(DocumentEvent e) 
-        {
-            if( numberJTextFields[0].getText().equals("") &&
-                numberJTextFields[1].getText().equals("") &&
-                numberJTextFields[2].getText().equals("") &&
-                numberJTextFields[3].getText().equals("") &&
-                numberJTextFields[4].getText().equals("") &&
-                numberJTextFields[5].getText().equals("") &&
-                numberJTextFields[6].getText().equals("") &&
-                numberJTextFields[7].getText().equals("") &&
-                numberJTextFields[8].getText().equals("") &&
-                numberJTextFields[9].getText().equals("") &&
-                numberJTextFields[10].getText().equals("") 
-               )
-                { 
-                    allnumbersJTextArea.setEditable(true);
-                    allnumbersJTextArea.setOpaque(true);
-                }               
-                                    
-            if (allnumbersJTextArea.getText().equals(""))
-            {
-                for(int i = 0; i < 11; i++)
-                {    
-                    numberJTextFields[i].setEditable(true);
-                }                    
-            }
-        } // End method removeUpdate              
-
-        public void changedUpdate(DocumentEvent e) { }                
-
-    } // End inner class inputChoiceHandler
-    
 } // End class Div2GUI
