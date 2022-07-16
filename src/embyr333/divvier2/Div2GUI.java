@@ -2,19 +2,18 @@
 This class originated as copy of Divvier project/program' Div2GUI 220706_2316  
 to Div2GUI; in process of modification for use in Divvier2 program/project... 
 
-Further changes made here:
-- Removed the JTextFields on left and associated toggle with use of input JTetArea
-(Used the field set in earlier development of original Divvier incarnation,
-but it's easier to enter collection in single text area. After adding the latter,
-kept the former more as an excuse to setup an automatic toggle between use of
-one and the other (entering in first disable second and vice-verse, for fun.)
-- Changed position of components (and idened input textarea) to make ue of vacated space
-- Removed unneeded labels
+Changes made here:
+- Tranferred the last statement from the Divvier2/Divvier2b classes to run just 
+once after the process() calls for those classe here
+- Changed variable name allNumberJTextArea to inputJTextArea, 
+and allNumberJScrollPane to inputJScrollPane
+- Expanded output area down to near frame bottom
+- Updated decriptions in instructionsJTextArea and infoButton message
 
 To-do's include:
-- Update infoButton message, or remove button/popup and put decription in instructionsJTextArea
+- Updated decriptions in instructionsJTextArea and infoButton message
 
-Commit date_time   220715_0031
+Commit date_time  220716_1721
 */
 
 package embyr333.divvier2; 
@@ -24,7 +23,6 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -35,8 +33,8 @@ public class Div2GUI extends JFrame
     
     private JButton infoJButton;
     
-    private JTextArea allnumbersJTextArea; // JTextArea for user input
-    private JScrollPane allnumbersJScrollPane; // ...scrollpane for above    
+    private JTextArea inputJTextArea; // JTextArea for user input
+    private JScrollPane inputJScrollPane; // ...scrollpane for above    
         
     private JButton clearJButton; // Clears input/outputJTextArea fields/areas 
 
@@ -58,30 +56,43 @@ public class Div2GUI extends JFrame
     {
         setLayout(null);
         
-        instructionsJTextArea = new JTextArea("Allows you to divide a collection "
-                + "of numbers into two subcollections as evenly as possible\n\n"
-                + "Enter the numbers you want to divvy, seperated by spaces / tabs / returns"); // --altered
-        instructionsJTextArea.setBounds(20, 20, 500, 80); // --poition, dimensions altered
+        instructionsJTextArea = new JTextArea("Aiming to divide a collection " // --provisional update of description
+                + "of numbers into two subcollections as evenly as possible.\n"
+                + "This version of 'Divvier', in progress, is a place where I'm trying out alternatives to the\n"
+                + "approaches in my original program.\n\n"
+                + "Enter the numbers you want to divvy, seperated by spaces / tabs / returns"); 
+        instructionsJTextArea.setBounds(20, 20, 530, 80); // --height altered
         instructionsJTextArea.setEditable(false);
         instructionsJTextArea.setOpaque(false);
         add(instructionsJTextArea);          
            
-        allnumbersJTextArea = new JTextArea(10, 20); // could clarify significance of these row,col parameters & whether want to alter
-        allnumbersJTextArea.setLineWrap(true);
-        allnumbersJTextArea.setWrapStyleWord(true); 
-        allnumbersJScrollPane = new JScrollPane(allnumbersJTextArea);
-        allnumbersJScrollPane.setBounds(20, 100, 540, 100); // --poition, dimensions altered
-        add(allnumbersJScrollPane);        
+        inputJTextArea = new JTextArea(10, 20); 
+        inputJTextArea.setLineWrap(true);
+        inputJTextArea.setWrapStyleWord(true); 
+        inputJScrollPane = new JScrollPane(inputJTextArea);
+        inputJScrollPane.setBounds(20, 100, 540, 100); 
+        add(inputJScrollPane);        
         
         infoJButton = new JButton("What is this nonsense?");
-        infoJButton.setBounds(200, 230, 180, 20); // --poition, dimensions altered
+        infoJButton.setBounds(200, 230, 180, 20); 
         infoJButton.addActionListener(new ActionListener() 
             {
                 public void actionPerformed(ActionEvent e) 
                 {                    
                     JOptionPane.showMessageDialog(Div2GUI.this /* or: rootPane */, 
                         "<html><p style='width:380px; font-weight:normal'><br>"
-                                + "***updated decription to be added*** " // --placeholder text for updating
+                                + "On doing CodingBat's MakeBricks problem, I wondered if "
+                                + "I could use an approach similar to that of the (very simple) "
+                                + "solution I made there to make a definitive (non-random, "
+                                + "guaranteed minimal difference for unlimited collection size) "
+                                + "alternative to my Divvier program (see http://embyrne.c1.biz/ "
+                                + "and https://github.com/embyr333/Divvier). <br><br>"
+                                + "Unfortunately, this is not quite working out so far, "
+                                + "though the Divvier2 programs do get an exact split for "
+                                + "some large input collections quicker than Divvier; the latter, "
+                                + "conversely, finds better splits for some large inputs, "
+                                + "but may have to be run a few times to get those as its ‘over-11’ "
+                                + "algorithm operates by random sampling." 
                                 + "<br><br></p></HTML>", 
                             "What this nonsense is", JOptionPane.INFORMATION_MESSAGE); 
                 }
@@ -90,13 +101,12 @@ public class Div2GUI extends JFrame
         add(infoJButton);         
                 
         clearJButton = new JButton("Clear");
-        clearJButton.setBounds(240, 280, 100, 20); // --poition, dimensions altered
-        clearJButton.addActionListener(
-            new ActionListener() 
+        clearJButton.setBounds(240, 280, 100, 20); 
+        clearJButton.addActionListener(new ActionListener() 
             {
                 public void actionPerformed(ActionEvent e) 
                 {                                        
-                    allnumbersJTextArea.setText("");
+                    inputJTextArea.setText("");
                     outputJTextArea.setText("");                                
                 }
             }
@@ -105,7 +115,7 @@ public class Div2GUI extends JFrame
         
         // Create the submitJButton with anonymous event handler
         submitJButton = new JButton("Submit");
-        submitJButton.setBounds(200, 330, 180, 40); // --poition, dimensions altered
+        submitJButton.setBounds(200, 330, 180, 40);
         submitJButton.addActionListener(new ActionListener() 
             { 
                 public void actionPerformed(ActionEvent e) 
@@ -115,9 +125,9 @@ public class Div2GUI extends JFrame
                     double value = 0;
                     
                     // If there is input in the JTextArea, extract that into 'numbers' ArrayList for processing
-                    if (!allnumbersJTextArea.getText().equals(""))
+                    if (!inputJTextArea.getText().equals(""))
                     {   
-                        String[] alltogether = allnumbersJTextArea.getText().trim().split("\\s+");
+                        String[] alltogether = inputJTextArea.getText().trim().split("\\s+");
                  
                         try
                         {
@@ -148,7 +158,17 @@ public class Div2GUI extends JFrame
 
                     // Send data to the processing classes --now just using the new approach(e)
                     Divvier2.process(numbersCopy);                         
-                    Divvier2b.process(numbersCopy);            
+                    Divvier2b.process(numbersCopy);      
+                    
+                    
+                    // --moved from copie in Divvier2 and Divvier2b classes
+                    getOutputJTextArea().append("(However there may be other combinations that give the same or more \n"
+                            + "equitable split which could be searched for with the originl 'Divvier' program,\n"
+                            + "which uses random sampling for input collections of >5 items)");         
+                    
+                    // --temporary print lines for testing area depth
+//                    getOutputJTextArea().append("\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12"); 
+                            
 
                     // Popup if there are values of zero in the input number collection 
                     for(int i = 0; i < numbers.size(); i++)
@@ -175,11 +195,12 @@ public class Div2GUI extends JFrame
         add(submitJButton);      
         
         outputJTextArea = new JTextArea();
-        outputJTextArea.setBounds(20, 400, 560, 300); // --poition, dimensions altered
+//        outputJTextArea.setBounds(20, 400, 560, 300); 
+        outputJTextArea.setBounds(20, 400, 560, 490); // --made deeper (lower boundary a few mm from frame boundary)
         outputJTextArea.setLineWrap(true);
         outputJTextArea.setWrapStyleWord(true); 
         outputJTextArea.setEditable(false);
-        outputJTextArea.setOpaque(false);
+        outputJTextArea.setOpaque(false); 
         add(outputJTextArea);         
     } // End constructor
 

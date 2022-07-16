@@ -2,11 +2,16 @@
 Further development of Divvier2 class (have not yet determined if improves split
 for any input collections, though)
 
-Changes made here to use with GUI:
-- Removed main method
-- Changed output tatement to print to GUI rather than console 
+Changes made here:
+- Removed the last statement for the GUI output diplay tetarea (tranferred to
+Div2GUI to appear just once, after main outputs from this class and Divvier2b)
+- Output wording tweak
 
-Commit date_time  220713_344
+To-do (for program) inc:
+- See if can a versuion of this class that does not use an intermediate map in processing
+(just work directly with lists)
+
+Commit date_time  220716_1721
  */
 
 package embyr333.divvier2;
@@ -116,23 +121,12 @@ class Divvier2b
         // and ordering along the way, and if/when existing code is verified
         // as reliable for optimal split, will go back and try to improve
         // conciseness + efficiency!
-        
-        
-        Div2GUI.getOutputJTextArea().append(String.format("Divvier2b:\n")); 
-        
-        // --replaced console print statements with equivalent placement of output in the output textarea
-        // Note that I would usually begin with a setText() call, but using append()
-        // for all items means that output statements for the Divvier2 and Divvier2b classes 
-        // can have identical code, and either class' method can be called first in DivGUI class
-        Div2GUI.getOutputJTextArea().append(String.format("Smallest difference is: %.1f\n", (total - (2 * div1)))); 
+
+        Div2GUI.getOutputJTextArea().append(String.format("Divvier2b smallest difference found: %.1f\n", (total - (2 * div1)))); // --wording
         Div2GUI.getOutputJTextArea().append(String.format("between sub-collection            %s\n", itemsUsed)); 
         Div2GUI.getOutputJTextArea().append(String.format("(totalling  %.1f)\n", div1)); 
         Div2GUI.getOutputJTextArea().append(String.format("and reciprocal sub-collection  %s\n", itemsNotUsed)); 
         Div2GUI.getOutputJTextArea().append(String.format("(totalling  %.1f)\n", (total - div1))); 
-
-        Div2GUI.getOutputJTextArea().append("(However there may be other combinations that give the same or more \n"
-                + "equitable split which could be searched for with the originl 'Divvier' program,\n"
-                + "which uses random sampling for input collections of >5 items)"); 
 
         Div2GUI.getOutputJTextArea().append("\n\n");
     }
