@@ -3,17 +3,10 @@ This class originated as copy of Divvier project/program' Div2GUI 220706_2316
 to Div2GUI; in process of modification for use in Divvier2 program/project... 
 
 Changes made here:
-- Tranferred the last statement from the Divvier2/Divvier2b classes to run just 
-once after the process() calls for those classe here
-- Changed variable name allNumberJTextArea to inputJTextArea, 
-and allNumberJScrollPane to inputJScrollPane
-- Expanded output area down to near frame bottom
-- Updated decriptions in instructionsJTextArea and infoButton message
+- Added a call to process() method of new class, Divvier2c
+- Added a statement to clear output area between runs (had overlooked in last version)
 
-To-do's include:
-- Updated decriptions in instructionsJTextArea and infoButton message
-
-Commit date_time  220716_1721
+Commit date_time  220718_0054
 */
 
 package embyr333.divvier2; 
@@ -156,19 +149,23 @@ public class Div2GUI extends JFrame
                     for(int i = 0; i < numbers.size(); i++)
                         numbersCopy.add(numbers.get(i));
 
-                    // Send data to the processing classes --now just using the new approach(e)
+                    
+                    outputJTextArea.setText(""); // --added to clear output area between runs
+                    // (since I am now using append() rather than setText() for all other 
+                    // printing statements, realised that each run's output is printed
+                    // sequentially in the output area otherwise)
+                    
+                    // Send data to the processing classes
                     Divvier2.process(numbersCopy);                         
                     Divvier2b.process(numbersCopy);      
+                    Divvier2c.process(numbersCopy); // --added
                     
-                    
-                    // --moved from copie in Divvier2 and Divvier2b classes
                     getOutputJTextArea().append("(However there may be other combinations that give the same or more \n"
                             + "equitable split which could be searched for with the originl 'Divvier' program,\n"
                             + "which uses random sampling for input collections of >5 items)");         
                     
                     // --temporary print lines for testing area depth
 //                    getOutputJTextArea().append("\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12"); 
-                            
 
                     // Popup if there are values of zero in the input number collection 
                     for(int i = 0; i < numbers.size(); i++)
